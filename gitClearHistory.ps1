@@ -1,5 +1,6 @@
 param(
-    $remoteName = 'origin'
+    $remoteName = 'origin',
+    $message = 'Initial commit'
 )
 
 . $PSScriptRoot/gitUtils.ps1
@@ -16,7 +17,7 @@ Remove-Item -Recurse -Force .git
 
 RunGit init
 RunGit "add ."
-RunGit "commit -m 'initial commit'"
+RunGit "commit -m '$message'"
 
 RunGit "remote add origin $remoteurl"
 
