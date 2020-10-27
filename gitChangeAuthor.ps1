@@ -12,14 +12,16 @@ if ($confirmation -ne 'Y') { Exit }
 $filter =
     "if [ `"`$GIT_COMMITTER_EMAIL`" = `"$oldEmail`" ]; " +
     "then " + 
-    "        GIT_COMMITTER_NAME=`"$newName`"; " +
-    "        GIT_AUTHOR_NAME=`"$newName`"; " + 
-    "        GIT_COMMITTER_EMAIL=`"$newEmail`"; " + 
-    "        GIT_AUTHOR_EMAIL=`"$newEmail`"; " +
+    "        GIT_COMMITTER_NAME='$newName'; " +
+    "        GIT_AUTHOR_NAME='$newName'; " + 
+    "        GIT_COMMITTER_EMAIL='$newEmail'; " + 
+    "        GIT_AUTHOR_EMAIL='$newEmail'; " +
     "        git commit-tree `"$@`"; " + 
     "else " +
     "        git commit-tree `"$@`"; " +
     "fi"
+
+$Env:FILTER_BRANCH_SQUELCH_WARNING=1
 git filter-branch --commit-filter $filter HEAD
 
 $confirmation = Read-Host "Are you sure to push changes?"
