@@ -15,7 +15,7 @@ $confirmation = Read-Host "Are you sure to clear history for repository $remoteU
 if ($confirmation -ne 'Y') { Exit }
 Remove-Item -Recurse -Force .git
 
-RunGit init
+RunGit "init"
 RunGit "add ."
 RunGit "commit -m '$message'"
 
