@@ -1,9 +1,8 @@
 ﻿param(
-    [Parameter(Mandatory=$true)] $targetBranchName,
-    $remoteName = 'origin'
+    [Parameter(Mandatory=$true)] $targetBranchName
 )
 
 . $PSScriptRoot/gitUtils.ps1
 
-Invoke-Expression "git branch -d $targetBranchName"
+git branch -d $targetBranchName
 RunGit "checkout $targetBranchName"
