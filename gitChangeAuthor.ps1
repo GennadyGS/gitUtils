@@ -1,12 +1,15 @@
 param (
     [Parameter(mandatory=$true)]$oldEmail,
     [Parameter(mandatory=$true)]$newName,
-    [Parameter(mandatory=$true)]$newEmail
+    [Parameter(mandatory=$true)]$newEmail,
+    $remoteName = "origin"
 )
 
 . $PSScriptRoot/gitUtils.ps1
 
-$confirmation = Read-Host "Are you sure to rewrite history for repository $remoteUrl ?"
+$currentBranch = GetCurrentBranch
+$currentBranch
+$confirmation = Read-Host "Are you sure to rewrite history for branch $($currentBranch)?"
 if ($confirmation -ne 'Y') { Exit }
 
 $filter =
@@ -24,6 +27,10 @@ $filter =
 $Env:FILTER_BRANCH_SQUELCH_WARNING=1
 git filter-branch --commit-filter $filter HEAD
 
-$confirmation = Read-Host "Are you sure to push changes?"
+$confirmation = Read-Host "Do you want to push changes?"
 if ($confirmation -ne 'Y') { Exit }
-RunGit "push -u --force origin master"
+RunGit "push -u --force $remoteName $currentBranch"
+
+$confirmation = Read-Host "Do you want to remove backup reference?"
+if ($confirmation -ne 'Y') { Exit }
+RunGit "update-ref -d refs/original/refs/heads/$currentBranch"
