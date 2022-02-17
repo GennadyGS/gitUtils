@@ -3,7 +3,7 @@ Function RunGit {
 
     $t = $host.ui.RawUI.ForegroundColor
     $host.ui.RawUI.ForegroundColor = "yellow"
-    Write-Output "git $gitArgsStr"
+    Write-Host "git $gitArgsStr"
     $host.ui.RawUI.ForegroundColor = $t
 
     Invoke-Expression "git $gitArgsStr"
