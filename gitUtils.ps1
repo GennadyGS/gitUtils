@@ -23,7 +23,7 @@ Function GetCurrentBranch {
 }
 
 Function GetRemoteUrl {
-    param ([Parameter(Mandatory=$true)] $remoteName = "origin")
+    param ([Parameter(Mandatory=$true)] $remoteName)
     return RunGit "config --get remote.$remoteName.url"
 }
 
@@ -32,8 +32,17 @@ Function GetWorkItems {
         [Parameter(Mandatory=$true)] $targetBranchName,
         [Parameter(Mandatory=$true)] $sourceBranchName
     )
-    RunGit "log --oneline $targetBranchName..$sourceBranchName" `
+    RunGit "log --oneline $targetBranchName..$sourceBranchName --no-merges" `
         | % { [regex]::match($_, "#(\d+)").Groups[1].Value } `
         | ? { $_ } `
         | Sort-Object -Unique
+}
+
+Function GetCommitMessages {
+    param (
+        [Parameter(Mandatory=$true)] $targetBranchName,
+        [Parameter(Mandatory=$true)] $sourceBranchName
+    )
+    RunGit "log --oneline $targetBranchName..$sourceBranchName --no-merges" `
+        | % { [regex]::match($_, "[0-9a-f]{9} (.*)").Groups[1].Value } `
 }
