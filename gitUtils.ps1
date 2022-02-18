@@ -44,5 +44,5 @@ Function GetCommitMessages {
         [Parameter(Mandatory=$true)] $sourceBranchName
     )
     RunGit "log --oneline $targetBranchName..$sourceBranchName --no-merges" `
-        | % { [regex]::match($_, "[0-9a-f]{9} (.*)").Groups[1].Value } `
+        | % { [regex]::match($_, "[0-9a-f]{7,12} (.*)").Groups[1].Value } `
 }
