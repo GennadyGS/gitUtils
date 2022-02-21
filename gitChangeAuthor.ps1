@@ -1,7 +1,7 @@
 param (
-    [Parameter(mandatory=$true)]$oldEmail,
-    [Parameter(mandatory=$true)]$newName,
-    [Parameter(mandatory=$true)]$newEmail,
+    [Parameter(mandatory=$true)] $oldEmail,
+    [Parameter(mandatory=$true)] $newName,
+    [Parameter(mandatory=$true)] $newEmail,
     $remoteName = "origin"
 )
 
@@ -14,12 +14,12 @@ if ($confirmation -ne 'Y') { Exit }
 
 $filter =
     "if [ `"`$GIT_COMMITTER_EMAIL`" = `"$oldEmail`" ]; " +
-    "then " + 
+    "then " +
     "        GIT_COMMITTER_NAME='$newName'; " +
-    "        GIT_AUTHOR_NAME='$newName'; " + 
-    "        GIT_COMMITTER_EMAIL='$newEmail'; " + 
+    "        GIT_AUTHOR_NAME='$newName'; " +
+    "        GIT_COMMITTER_EMAIL='$newEmail'; " +
     "        GIT_AUTHOR_EMAIL='$newEmail'; " +
-    "        git commit-tree `"$@`"; " + 
+    "        git commit-tree `"$@`"; " +
     "else " +
     "        git commit-tree `"$@`"; " +
     "fi"
