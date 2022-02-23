@@ -27,6 +27,12 @@ Function GetRemoteUrl {
     return RunGit "config --get remote.$remoteName.url"
 }
 
+Function GetCurrentRepositoryName {
+    param ([Parameter(Mandatory=$true)] $remoteName)
+    $remoteUrl = GetRemoteUrl -remoteName $remoteName
+    [regex]::match($remoteUrl, ".*/(.*)$").Groups[1].Value
+}
+
 Function GetWorkItems {
     param (
         [Parameter(Mandatory=$true)] $targetBranchName,
