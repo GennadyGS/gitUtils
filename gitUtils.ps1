@@ -1,10 +1,15 @@
 Function RunGit {
-    param ([Parameter(Mandatory=$true)] $gitArgsStr)
+    param (
+        [Parameter(Mandatory=$true)] $gitArgsStr,
+        [switch] $noLog
+    )
 
-    $t = $host.ui.RawUI.ForegroundColor
-    $host.ui.RawUI.ForegroundColor = "yellow"
-    Write-Host "git $gitArgsStr"
-    $host.ui.RawUI.ForegroundColor = $t
+    if (!$noLog) {
+        $t = $host.ui.RawUI.ForegroundColor
+        $host.ui.RawUI.ForegroundColor = "yellow"
+        Write-Host "git $gitArgsStr"
+        $host.ui.RawUI.ForegroundColor = $t
+    }
 
     Invoke-Expression "git $gitArgsStr"
     if ($LastExitCode -ne 0) {
@@ -19,17 +24,18 @@ Function CheckGitStash {
 }
 
 Function GetCurrentBranch {
-    return [regex]::match((RunGit "status -b")[0], "On branch (.*)").Groups[1].Value
+    $gitStatus = @(RunGit "status -b" -noLog)[0]
+    return [regex]::match($gitStatus, "On branch (.*)").Groups[1].Value
 }
 
 Function GetRemoteUrl {
     param ([Parameter(Mandatory=$true)] $remoteName)
-    return RunGit "config --get remote.$remoteName.url"
+    return RunGit "config --get remote.$remoteName.url" -noLog
 }
 
 Function GetCurrentRepositoryName {
     param ([Parameter(Mandatory=$true)] $remoteName)
-    $remoteUrl = GetRemoteUrl -remoteName $remoteName
+    $remoteUrl = GetRemoteUrl $remoteName
     [regex]::match($remoteUrl, ".*/(.*)$").Groups[1].Value
 }
 
