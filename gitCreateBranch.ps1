@@ -11,8 +11,8 @@ $changesShashed = CheckGitStash
 $currentBranch = GetCurrentBranch
 "current branch is $currentBranch"
 if ($currentBranch -eq $targetBranchName) {
-    "branch $targetBranchName is already created"    
-    exit   
+    "branch $targetBranchName is already created"
+    exit
 }
 if ($sourceBranchName -and ($currentBranch -ne $sourceBranchName)) {
     RunGit "checkout $sourceBranchName"
