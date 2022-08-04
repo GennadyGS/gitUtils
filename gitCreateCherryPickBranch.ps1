@@ -32,7 +32,16 @@ $newBranchName = "$sourceBranchName-to-$toTargetBranchName"
 RunGit "checkout -b $newBranchName"
 
 git cherry-pick --abort
-RunGit "cherry-pick $remoteName/$fromTargetBranchName..$sourceBranchName"
+
+$commits = RunGit "log $fromTargetBranchName..$sourceBranchName"
+if (!($commits)) {
+    $fromTargetRef = "$fromTargetBranchName~1"
+}
+else {
+    $fromTargetRef = $fromTargetBranchName
+}
+
+RunGit "cherry-pick $fromTargetRef..$sourceBranchName"
 
 RunGit "push -u $remoteName $newBranchName"
 
