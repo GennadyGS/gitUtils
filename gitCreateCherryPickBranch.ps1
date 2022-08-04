@@ -1,5 +1,6 @@
 ﻿param(
-    [Parameter(Mandatory=$true)] $targetBranchName,
+    [Parameter(Mandatory=$true)] $toTargetBranchName,
+    $fromTargetBranchName = "master",
     $sourceBranchName,
     $remoteName = "origin",
     [switch] $returnToCurrentBranch
@@ -16,22 +17,22 @@ if (!$sourceBranchName) {
     $sourceBranchName = $currentBranch
 }
 
-if ($sourceBranchName -eq $targetBranchName) {
-    "branch $targetBranchName is already created"
+if ($sourceBranchName -eq $toTargetBranchName) {
+    "branch $toTargetBranchName is already created"
     exit
 }
 if ($currentBranch -ne $sourceBranchName) {
     RunGit "checkout $sourceBranchName"
 }
 
-. $PsScriptRoot\gitRecreateBranch.ps1 $targetBranchName
+. $PsScriptRoot\gitRecreateBranch.ps1 $toTargetBranchName
 
-$newBranchName = "$sourceBranchName-to-$targetBranchName"
+$newBranchName = "$sourceBranchName-to-$toTargetBranchName"
 
 RunGit "checkout -b $newBranchName"
 
 git cherry-pick --abort
-RunGit "cherry-pick $sourceBranchName"
+RunGit "cherry-pick $remoteName/$fromTargetBranchName..$sourceBranchName"
 
 RunGit "push -u $remoteName $newBranchName"
 
