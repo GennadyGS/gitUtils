@@ -22,5 +22,5 @@ If (!(Test-Path ".\$gitDirectoryName")) {
             Write-Output ""
         }
 } Else {
-    RunGit $argsStr
+    RunGit status
 }
