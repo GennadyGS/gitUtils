@@ -19,7 +19,6 @@ If (!(Test-Path ".\$gitDirectoryName")) {
                 RunGit status
             }
             Pop-Location
-            Write-Output ""
         }
 } Else {
     RunGit status
