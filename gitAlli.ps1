@@ -10,7 +10,6 @@ If (!(Test-Path ".\$gitDirectoryName")) {
             Push-Location $_
             RunGit $argsStr
             Pop-Location
-            Write-Host ""
         }
 } Else {
     RunGit $argsStr
