@@ -7,6 +7,11 @@
 
 $currentBranch = GetCurrentBranch
 
+if ($currentBranch -eq $targetBranchName) {
+    Write-Host "Already on branch $targetBranchName"
+    Return
+}
+
 git branch -d $targetBranchName
 RunGit "checkout $targetBranchName"
 
