@@ -1,7 +1,8 @@
 Function RunGit {
     param (
         [Parameter(Mandatory=$true)] $gitArgsStr,
-        [switch] $noLog
+        [switch] $noLog,
+        [switch] $silent
     )
 
     if (!$noLog) {
@@ -12,7 +13,7 @@ Function RunGit {
     }
 
     Invoke-Expression "git $gitArgsStr"
-    if ($LastExitCode -ne 0) {
+    if (!$silent -and $LastExitCode -ne 0) {
         throw "'git $gitArgsStr' returned code $LastExitCode"
     }
 }

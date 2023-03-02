@@ -1,16 +1,20 @@
+param (
+    [switch] $silent
+)
+
 . $PSScriptRoot/gitUtils.ps1
 
-$argsStr="$args"
+$argsStr = [string]$args
 $gitDirectoryName = ".git"
-If (!(Test-Path ".\$gitDirectoryName")) {
+if (!(Test-Path ".\$gitDirectoryName")) {
     Get-ChildItem -Directory `
-        | ? {Test-Path "$_\$gitDirectoryName"} `
-        | % {
-            Write-Host "$_>" -NoNewLine -ForegroundColor darkYellow
-            Push-Location $_
-            RunGit $argsStr
-            Pop-Location
-        }
-} Else {
+    | Where-Object { Test-Path "$_\$gitDirectoryName" } `
+    | ForEach-Object {
+        Write-Host "$_>" -NoNewLine -ForegroundColor darkYellow
+        Push-Location $_
+        RunGit $argsStr -silent:$silent
+        Pop-Location
+    }
+} else {
     RunGit $argsStr
 }
