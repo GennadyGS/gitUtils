@@ -1,3 +1,15 @@
+$commandColor = "yellow"
+
+Function RunAndLogCommand {
+    if (!$args) {
+        Throw "Command is not specified for function Run"
+    }
+
+    $commandText = [string]$args
+    Write-Host $commandText -ForegroundColor $commandColor
+    Invoke-Expression $commandText
+}
+
 Function RunGit {
     param (
         [Parameter(Mandatory=$true)] $gitArgsStr,
@@ -6,10 +18,7 @@ Function RunGit {
     )
 
     if (!$noLog) {
-        $t = $host.ui.RawUI.ForegroundColor
-        $host.ui.RawUI.ForegroundColor = "yellow"
-        Write-Host "git $gitArgsStr"
-        $host.ui.RawUI.ForegroundColor = $t
+        Write-Host "git $gitArgsStr" -ForegroundColor $commandColor
     }
 
     Invoke-Expression "git $gitArgsStr"
