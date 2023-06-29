@@ -1,4 +1,5 @@
 $commandColor = "yellow"
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
 Function RunAndLogCommand {
     if (!$args) {
