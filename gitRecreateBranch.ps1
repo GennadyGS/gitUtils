@@ -1,5 +1,6 @@
 ﻿param(
     [Parameter(Mandatory=$true)] $targetBranchName,
+    $remoteName = "origin",
     [switch] $deleteCurrentBranch
 )
 
@@ -12,8 +13,7 @@ if ($currentBranch -eq $targetBranchName) {
     Return
 }
 
-git branch -d $targetBranchName
-RunGit "checkout $targetBranchName"
+RunGit "checkout -B $targetBranchName $remoteName/$targetBranchName"
 
 if ($deleteCurrentBranch) {
     git branch -d $currentBranch
