@@ -1,7 +1,7 @@
 ﻿param(
     [Parameter(Mandatory=$true)] $targetBranchName,
     $remoteName = "origin",
-    [switch] $deleteCurrentBranch
+    [Alias("d")] [switch] $deleteCurrentBranch
 )
 
 . $PSScriptRoot/gitUtils.ps1
