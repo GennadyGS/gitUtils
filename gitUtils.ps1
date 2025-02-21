@@ -66,10 +66,10 @@ Function IsCurrentRepository {
 
 Function GetWorkItems {
     param (
-        [Parameter(Mandatory=$true)] $targetBranchName,
-        [Parameter(Mandatory=$true)] $sourceBranchName
+        [Parameter(Mandatory=$true)] $targetBranch,
+        [Parameter(Mandatory=$true)] $sourceBranch
     )
-    RunGit "log --oneline $targetBranchName..$sourceBranchName --no-merges" -noLog `
+    RunGit "log --oneline $targetBranch..$sourceBranch --no-merges" -noLog `
         | % { [regex]::match($_, "#(\d+)").Groups[1].Value } `
         | ? { $_ } `
         | Sort-Object -Unique
@@ -77,9 +77,9 @@ Function GetWorkItems {
 
 Function GetCommitMessages {
     param (
-        [Parameter(Mandatory=$true)] $targetBranchName,
-        [Parameter(Mandatory=$true)] $sourceBranchName
+        [Parameter(Mandatory=$true)] $targetBranch,
+        [Parameter(Mandatory=$true)] $sourceBranch
     )
-    RunGit "log --oneline $targetBranchName..$sourceBranchName --no-merges" -noLog `
+    RunGit "log --oneline $targetBranch..$sourceBranch --no-merges" -noLog `
         | % { [regex]::match($_, "[0-9a-f]{7,12} (.*)").Groups[1].Value } `
 }

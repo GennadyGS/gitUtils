@@ -1,6 +1,6 @@
 ﻿param(
-    [Parameter(Mandatory=$true)] $targetBranchName,
-    $sourceBranchName = '',
+    [Parameter(Mandatory=$true)] $targetBranch,
+    $sourceBranch = '',
     $remoteName = 'origin',
     [switch] $returnToCurrentBranch
 )
@@ -10,15 +10,15 @@
 $changesShashed = CheckGitStash
 $currentBranch = GetCurrentBranch
 "current branch is $currentBranch"
-if ($currentBranch -eq $targetBranchName) {
-    "branch $targetBranchName is already created"
+if ($currentBranch -eq $targetBranch) {
+    "branch $targetBranch is already created"
     exit
 }
-if ($sourceBranchName -and ($currentBranch -ne $sourceBranchName)) {
-    RunGit "checkout $sourceBranchName"
+if ($sourceBranch -and ($currentBranch -ne $sourceBranch)) {
+    RunGit "checkout $sourceBranch"
 }
-RunGit "checkout -b $targetBranchName"
-RunGit "push -u $remoteName $targetBranchName"
+RunGit "checkout -b $targetBranch"
+RunGit "push -u $remoteName $targetBranch"
 if ($returnToCurrentBranch) {
     RunGit "checkout $currentBranch"
 }

@@ -1,5 +1,5 @@
 ﻿param(
-    [Parameter(Mandatory=$true)] $targetBranchName,
+    [Parameter(Mandatory=$true)] $targetBranch,
     $remoteName = "origin",
     [Alias("d")] [switch] $deleteCurrentBranch
 )
@@ -8,12 +8,12 @@
 
 $currentBranch = GetCurrentBranch
 
-if ($currentBranch -eq $targetBranchName) {
-    Write-Host "Already on branch $targetBranchName"
+if ($currentBranch -eq $targetBranch) {
+    Write-Host "Already on branch $targetBranch"
     Return
 }
 
-RunGit "checkout -B $targetBranchName $remoteName/$targetBranchName"
+RunGit "checkout -B $targetBranch $remoteName/$targetBranch"
 
 if ($deleteCurrentBranch) {
     git branch -d $currentBranch
