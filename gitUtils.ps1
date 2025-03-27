@@ -83,3 +83,11 @@ Function GetCommitMessages {
     RunGit "log --oneline $targetBranch..$sourceBranch --no-merges" -noLog `
         | % { [regex]::match($_, "[0-9a-f]{7,12} (.*)").Groups[1].Value } `
 }
+
+Function CheckoutBranch([Parameter(Mandatory=$true)] $branchName,  $startPoint, $params) {
+    $startPointArg = $startPoint ? " $startPoint" : "";
+    $paramsArg = $params ? " $params" : "";
+    $command = "checkout $paramsArg$branchName$startPointArg"
+    RunGit $command
+    RunGit "submodule update"
+}

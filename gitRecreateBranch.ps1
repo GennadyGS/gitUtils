@@ -13,7 +13,7 @@ if ($currentBranch -eq $targetBranch) {
     Return
 }
 
-RunGit "checkout -B $targetBranch $remoteName/$targetBranch"
+CheckOutBranch $targetBranch "$remoteName/$targetBranch" "-B"
 
 if ($deleteCurrentBranch) {
     git branch -d $currentBranch

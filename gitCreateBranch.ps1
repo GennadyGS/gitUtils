@@ -7,7 +7,7 @@
 
 . $PSScriptRoot/gitUtils.ps1
 
-$changesShashed = CheckGitStash
+$changesStashed = CheckGitStash
 $currentBranch = GetCurrentBranch
 "current branch is $currentBranch"
 if ($currentBranch -eq $targetBranch) {
@@ -15,13 +15,13 @@ if ($currentBranch -eq $targetBranch) {
     exit
 }
 if ($sourceBranch -and ($currentBranch -ne $sourceBranch)) {
-    RunGit "checkout $sourceBranch"
+    CheckOutBranch $sourceBranch
 }
 RunGit "checkout -b $targetBranch"
 RunGit "push -u $remoteName $targetBranch"
 if ($returnToCurrentBranch) {
-    RunGit "checkout $currentBranch"
+    CheckOutBranch $currentBranch
 }
-if ($changesShashed) {
+if ($changesStashed) {
     RunGit "stash pop"
 }
