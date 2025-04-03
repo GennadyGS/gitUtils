@@ -84,9 +84,9 @@ Function GetCommitMessages {
         | % { [regex]::match($_, "[0-9a-f]{7,12} (.*)").Groups[1].Value } `
 }
 
-Function CheckoutBranch([Parameter(Mandatory=$true)] $branchName,  $startPoint, $params) {
+Function CheckoutBranch([Parameter(Mandatory=$true)] $branchName, $startPoint, $params) {
+    $paramsArg = $params ? "$params " : "";
     $startPointArg = $startPoint ? " $startPoint" : "";
-    $paramsArg = $params ? " $params" : "";
     $command = "checkout $paramsArg$branchName$startPointArg"
     RunGit $command
     RunGit "submodule update"
