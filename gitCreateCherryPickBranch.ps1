@@ -1,6 +1,6 @@
 ﻿param(
-    [Parameter(Mandatory=$true)] $toTargetBranchName,
-    $fromTargetBranchName = "master",
+    [Parameter(Mandatory=$true)] $toTargetBranch,
+    $fromTargetBranch = "master",
     $sourceBranch,
     $remoteName = "origin",
     [switch] $returnToCurrentBranch
@@ -17,28 +17,28 @@ if (!$sourceBranch) {
     $sourceBranch = $currentBranch
 }
 
-if ($sourceBranch -eq $toTargetBranchName) {
-    "branch $toTargetBranchName is already created"
+if ($sourceBranch -eq $toTargetBranch) {
+    "branch $toTargetBranch is already created"
     exit
 }
 if ($currentBranch -ne $sourceBranch) {
     CheckOutBranch $sourceBranch
 }
 
-. $PsScriptRoot\gitRecreateBranch.ps1 $toTargetBranchName
+. $PsScriptRoot\gitRecreateBranch.ps1 $toTargetBranch
 
-$newBranchName = "$sourceBranch-to-$toTargetBranchName"
+$newBranchName = "$sourceBranch-to-$toTargetBranch"
 
 RunGit "checkout -b $newBranchName"
 
 git cherry-pick --abort
 
-$commits = RunGit "log $fromTargetBranchName..$sourceBranch"
+$commits = RunGit "log $fromTargetBranch..$sourceBranch"
 if (!($commits)) {
-    $fromTargetRef = "$fromTargetBranchName~1"
+    $fromTargetRef = "$fromTargetBranch~1"
 }
 else {
-    $fromTargetRef = $fromTargetBranchName
+    $fromTargetRef = $fromTargetBranch
 }
 
 RunGit "cherry-pick $fromTargetRef..$sourceBranch"
