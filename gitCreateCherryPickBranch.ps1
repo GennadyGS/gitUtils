@@ -41,7 +41,7 @@ else {
     $fromTargetRef = $fromTargetBranch
 }
 
-RunGit "cherry-pick $fromTargetRef..$sourceBranch"
+RunGit "cherry-pick $fromTargetRef..$sourceBranch --no-merges"
 
 RunGit "push -u $remoteName $newBranchName"
 
