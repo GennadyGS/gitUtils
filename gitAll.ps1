@@ -1,5 +1,6 @@
 param (
-    [switch] $silent
+    [switch] $Silent,
+    [switch] $Retry
 )
 
 . $PSScriptRoot/gitUtils.ps1
@@ -12,9 +13,9 @@ if (!(Test-Path ".\$gitDirectoryName")) {
     | ForEach-Object {
         Write-Host "$_>" -NoNewLine -ForegroundColor darkYellow
         Push-Location $_
-        RunGit $argsStr -silent:$silent
+        RunGit $argsStr -Silent:$Silent -Retry:$Retry
         Pop-Location
     }
 } else {
-    RunGit $argsStr
+    RunGit $argsStr -Silent:$Silent -Retry:$Retry
 }

@@ -1,0 +1,1 @@
+Invoke-Expression ". $PSScriptRoot/gitAll.ps1 -Retry $args"

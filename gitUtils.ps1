@@ -1,6 +1,30 @@
 $commandColor = "yellow"
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
+function Retry-Block {
+    param(
+        [Parameter(Mandatory=$true)][ScriptBlock] $ScriptBlock,
+        [int] $Attempts,
+        [int] $DelaySeconds = 3
+    )
+    $establishedAttempts = [Math]::Max($Attempts, 1)
+    for ($i = 1; $i -le $establishedAttempts; $i++) {
+        try {
+            & $ScriptBlock
+            return
+        } catch {
+            if ($i -ge $establishedAttempts) {
+                throw $_
+            } else {
+                Write-Warning (
+                    "Attempt $i failed: $($_.Exception.Message). " +
+                    "Retrying in $DelaySeconds second(s)...")
+                Start-Sleep -Seconds $DelaySeconds
+            }
+        }
+    }
+}
+
 Function RunAndLogCommand {
     if (!$args) {
         Throw "Command is not specified for function Run"
@@ -13,19 +37,22 @@ Function RunAndLogCommand {
 
 Function RunGit {
     param (
-        [Parameter(Mandatory=$true)] $gitArgsStr,
-        [switch] $noLog,
-        [switch] $silent
+        [Parameter(Mandatory=$true)] $GitArgsStr,
+        [switch] $NoLog,
+        [switch] $Silent,
+        [switch] $Retry
     )
 
-    if (!$noLog) {
-        Write-Host "git $gitArgsStr" -ForegroundColor $commandColor
+    if (!$NoLog) {
+        Write-Host "git $GitArgsStr" -ForegroundColor $commandColor
     }
 
-    Invoke-Expression "git $gitArgsStr"
-    if (!$silent -and $LastExitCode -ne 0) {
-        throw "'git $gitArgsStr' returned code $LastExitCode"
-    }
+    Retry-Block {
+        Invoke-Expression "git $GitArgsStr"
+        if (!$Silent -and $LastExitCode -ne 0) {
+            throw "'git $GitArgsStr' returned code $LastExitCode"
+        }
+    } -Attempts ($Retry ? 3 : 1)
 }
 
 Function CheckGitStash {
