@@ -1,5 +1,5 @@
 param (
-    [string[]] $mainbranchNames = @(),
+    [string[]] $mainBranchNames = @(),
     $remoteName = "origin"
 )
 
