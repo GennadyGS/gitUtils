@@ -4,5 +4,5 @@
             allowlist = @('%', '?')
         }
     }
-    ExcludeRules = @('PSAvoidUsingWriteHost', 'PSAvoidUsingInvokeExpression')
+    ExcludeRules = @('PSAvoidUsingWriteHost')
 }

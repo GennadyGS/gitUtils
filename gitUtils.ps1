@@ -1,9 +1,9 @@
-$commandColor = "yellow"
+$highlightedColor = "white"
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
-function Retry-Block {
+function RetryBlock {
     param(
-        [Parameter(Mandatory=$true)][ScriptBlock] $ScriptBlock,
+        [Parameter(Mandatory=$true)] [ScriptBlock] $ScriptBlock,
         [int] $Attempts,
         [int] $DelaySeconds = 3
     )
@@ -31,7 +31,7 @@ Function RunAndLogCommand {
     }
 
     $commandText = [string]$args
-    Write-Host $commandText -ForegroundColor $commandColor
+    Write-Host $commandText -ForegroundColor $highlightedColor
     Invoke-Expression $commandText
 }
 
@@ -47,12 +47,53 @@ Function RunGit {
         Write-Host "git $GitArgsStr" -ForegroundColor $commandColor
     }
 
-    Retry-Block {
+    RetryBlock {
         Invoke-Expression "git $GitArgsStr"
         if (!$Silent -and $LastExitCode -ne 0) {
             throw "'git $GitArgsStr' returned code $LastExitCode"
         }
     } -Attempts ($Retry ? 3 : 1)
+}
+
+Function RunAndLogCommand2(
+    [string] $Command,
+    [switch] $NoLog,
+    [switch] $Silent
+)
+{
+    if(!$NoLog) {
+        Write-Host "$Command $args" -ForegroundColor $highlightedColor
+    }
+
+    & $Command @args
+}
+
+function VerifyExitCode(
+    [Parameter(Mandatory=$true)] [ScriptBlock] $ScriptBlock,
+    [string] $Description,
+    [switch] $Silent)
+{
+    & $ScriptBlock
+    if (!$Silent -and $global:LastExitCode -ne 0) {
+        throw "'$Description' returned code $global:LastExitCode"
+    }
+}
+
+Function RunGit2(
+    [switch] $NoLog,
+    [switch] $Silent,
+    [switch] $Retry
+)
+{
+    $arguments = $args
+    RetryBlock {
+        VerifyExitCode {
+            RunAndLogCommand2 git @arguments -NoLog:$NoLog
+        } `
+        -Description ("git " + ($arguments -join ' ')) `
+        -Silent:$Silent
+    } `
+    -Attempts ($Retry ? 3 : 1)
 }
 
 Function CheckGitStash {
@@ -117,4 +158,9 @@ Function CheckoutBranch([Parameter(Mandatory=$true)] $branchName, $startPoint, $
     $command = "checkout $paramsArg$branchName$startPointArg"
     RunGit $command
     RunGit "submodule update"
+}
+
+function Test-InGitRepo {
+    git rev-parse --is-inside-work-tree 2>$null | Out-Null
+    return ($LastExitCode -eq 0)
 }
