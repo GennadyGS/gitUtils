@@ -5,17 +5,16 @@ param (
 
 . $PSScriptRoot/gitUtils.ps1
 
-$argsStr = [string]$args
-$gitDirectoryName = ".git"
-if (!(Test-Path ".\$gitDirectoryName")) {
+$arguments = $args
+if (!(Test-InGitRepo)) {
     Get-ChildItem -Directory `
     | Where-Object { Test-Path "$_\$gitDirectoryName" } `
     | ForEach-Object {
         Write-Host "$_>" -NoNewLine -ForegroundColor darkYellow
         Push-Location $_
-        RunGit $argsStr -Silent:$Silent -Retry:$Retry
+        RunGit2 @arguments -Silent:$Silent -Retry:$Retry
         Pop-Location
     }
 } else {
-    RunGit $argsStr -Silent:$Silent -Retry:$Retry
+    RunGit2 @arguments -Silent:$Silent -Retry:$Retry
 }
