@@ -1,5 +1,5 @@
 $highlightedColor = "white"
-[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new()
 
 function RetryBlock {
     param(
@@ -44,7 +44,7 @@ Function RunGit {
     )
 
     if (!$NoLog) {
-        Write-Host "git $GitArgsStr" -ForegroundColor $commandColor
+        Write-Host "git $GitArgsStr" -ForegroundColor $highlightedColor
     }
 
     RetryBlock {
