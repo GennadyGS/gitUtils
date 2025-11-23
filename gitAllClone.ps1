@@ -1,10 +1,13 @@
-param (
-    [parameter(mandatory=$true, position=0)][string]$fileName,
-    [parameter(mandatory=$false, position=1, ValueFromRemainingArguments=$true)]$remainingArgs
+param(
+  [Parameter(Mandatory, Position = 0)]
+  [string] $fileName,
+
+  [Parameter(Position = 1, ValueFromRemainingArguments)]
+  [string[]] $remainingArgs
 )
 
 . $PSScriptRoot/gitUtils.ps1
 
 Get-Content $fileName `
     | ? { $_ } `
-    | % { RunGit "clone $_ $remainingArgs" }
+    | % { RunGit clone $_ @remainingArgs }

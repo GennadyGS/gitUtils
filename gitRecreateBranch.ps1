@@ -1,5 +1,5 @@
 ﻿param(
-    [Parameter(Mandatory=$true)] $targetBranch,
+    [Parameter(Mandatory)] $targetBranch,
     $remoteName = "origin",
     [Alias("d")] [switch] $deleteCurrentBranch
 )

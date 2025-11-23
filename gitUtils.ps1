@@ -3,7 +3,7 @@ $highlightedColor = "white"
 
 function RetryBlock {
     param(
-        [Parameter(Mandatory=$true)] [ScriptBlock] $ScriptBlock,
+        [Parameter(Mandatory)] [ScriptBlock] $ScriptBlock,
         [int] $Attempts,
         [int] $DelaySeconds = 3
     )
@@ -25,37 +25,7 @@ function RetryBlock {
     }
 }
 
-Function RunAndLogCommand {
-    if (!$args) {
-        Throw "Command is not specified for function Run"
-    }
-
-    $commandText = [string]$args
-    Write-Host $commandText -ForegroundColor $highlightedColor
-    Invoke-Expression $commandText
-}
-
-Function RunGit {
-    param (
-        [Parameter(Mandatory=$true)] $GitArgsStr,
-        [switch] $NoLog,
-        [switch] $Silent,
-        [switch] $Retry
-    )
-
-    if (!$NoLog) {
-        Write-Host "git $GitArgsStr" -ForegroundColor $highlightedColor
-    }
-
-    RetryBlock {
-        Invoke-Expression "git $GitArgsStr"
-        if (!$Silent -and $LastExitCode -ne 0) {
-            throw "'git $GitArgsStr' returned code $LastExitCode"
-        }
-    } -Attempts ($Retry ? 3 : 1)
-}
-
-Function RunAndLogCommand2(
+Function RunAndLogCommand(
     [string] $Command,
     [switch] $NoLog,
     [switch] $Silent
@@ -69,7 +39,7 @@ Function RunAndLogCommand2(
 }
 
 function VerifyExitCode(
-    [Parameter(Mandatory=$true)] [ScriptBlock] $ScriptBlock,
+    [Parameter(Mandatory)] [ScriptBlock] $ScriptBlock,
     [string] $Description,
     [switch] $Silent)
 {
@@ -79,7 +49,7 @@ function VerifyExitCode(
     }
 }
 
-Function RunGit2(
+Function RunGit(
     [switch] $NoLog,
     [switch] $Silent,
     [switch] $Retry
@@ -88,7 +58,7 @@ Function RunGit2(
     $arguments = $args
     RetryBlock {
         VerifyExitCode {
-            RunAndLogCommand2 git @arguments -NoLog:$NoLog
+            RunAndLogCommand git @arguments -NoLog:$NoLog
         } `
         -Description ("git " + ($arguments -join ' ')) `
         -Silent:$Silent
@@ -97,36 +67,36 @@ Function RunGit2(
 }
 
 Function CheckGitStash {
-    $gitStashOutput = RunGit "stash"
+    $gitStashOutput = RunGit stash
     $gitStashOutput | Write-Host
     return [bool] ($gitStashOutput | Select-String "Saved working directory")
 }
 
 Function GetCurrentBranch {
-    $gitStatus = @(RunGit "status -b" -noLog)[0]
+    $gitStatus = @(RunGit status -b -noLog)[0]
     return [regex]::match($gitStatus, "On branch (.*)").Groups[1].Value
 }
 
 Function GetRemoteUrl {
-    param ([Parameter(Mandatory=$true)] $remoteName)
-    return RunGit "config --get remote.$remoteName.url" -noLog
+    param ([Parameter(Mandatory)] $remoteName)
+    return RunGit config --get remote.$remoteName.url -noLog
 }
 
 Function GetCurrentRepositoryName {
-    param ([Parameter(Mandatory=$true)] $remoteName)
+    param ([Parameter(Mandatory)] $remoteName)
     $remoteUrl = GetRemoteUrl $remoteName
     [regex]::match($remoteUrl, ".*/(.*)$").Groups[1].Value
 }
 
 Function IsInsideWorkTree {
-    $output = @(Invoke-Expression "git rev-parse --is-inside-work-tree" -ErrorAction Ignore)
-    ($output | Select-Object -First 1) -eq "true"
+    git rev-parse --is-inside-work-tree 2>$null | Out-Null
+    return ($LastExitCode -eq 0)
 }
 
 Function IsCurrentRepository {
     param (
-        [Parameter(Mandatory=$true)] $repositoryName,
-        [Parameter(Mandatory=$true)] $remoteName
+        [Parameter(Mandatory)] $repositoryName,
+        [Parameter(Mandatory)] $remoteName
     )
     if (!(IsInsideWorkTree)) { return $false }
     (GetCurrentRepositoryName $remoteName) -eq $repositoryName
@@ -134,10 +104,10 @@ Function IsCurrentRepository {
 
 Function GetWorkItems {
     param (
-        [Parameter(Mandatory=$true)] $targetBranch,
-        [Parameter(Mandatory=$true)] $sourceBranch
+        [Parameter(Mandatory)] $targetBranch,
+        [Parameter(Mandatory)] $sourceBranch
     )
-    RunGit "log --oneline $targetBranch..$sourceBranch --no-merges" -noLog `
+    RunGit log --oneline $targetBranch..$sourceBranch --no-merges -noLog `
         | % { [regex]::match($_, "#(\d+)").Groups[1].Value } `
         | ? { $_ } `
         | Sort-Object -Unique
@@ -145,22 +115,14 @@ Function GetWorkItems {
 
 Function GetCommitMessages {
     param (
-        [Parameter(Mandatory=$true)] $targetBranch,
-        [Parameter(Mandatory=$true)] $sourceBranch
+        [Parameter(Mandatory)] $targetBranch,
+        [Parameter(Mandatory)] $sourceBranch
     )
-    RunGit "log --oneline $targetBranch..$sourceBranch --no-merges" -noLog `
+    RunGit log --oneline $targetBranch..$sourceBranch --no-merges -noLog `
         | % { [regex]::match($_, "[0-9a-f]{7,12} (.*)").Groups[1].Value } `
 }
 
-Function CheckoutBranch([Parameter(Mandatory=$true)] $branchName, $startPoint, $params) {
-    $paramsArg = $params ? "$params " : "";
-    $startPointArg = $startPoint ? " $startPoint" : "";
-    $command = "checkout $paramsArg$branchName$startPointArg"
-    RunGit $command
-    RunGit "submodule update"
-}
-
-function Test-InGitRepo {
-    git rev-parse --is-inside-work-tree 2>$null | Out-Null
-    return ($LastExitCode -eq 0)
+Function CheckoutBranch($branchName, $startPoint) {
+    RunGit checkout @args $branchName $startPoint
+    RunGit submodule update
 }

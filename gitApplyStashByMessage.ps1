@@ -1,11 +1,11 @@
 param(
-    [Parameter(Mandatory = $true)] [string] $Message,
+    [Parameter(Mandatory)] [string] $Message,
     [switch] $Pop
 )
 
 . $PSScriptRoot/gitUtils.ps1
 
-$stashes = RunGit2 stash list --pretty=format:'%H|%gd|%gs'
+$stashes = RunGit stash list --pretty=format:'%H|%gd|%gs'
 
 $match = $stashes |
     Where-Object {
@@ -24,7 +24,7 @@ $msg = $matches.msg
 Write-Host
     "Applying $($Pop ? 'and popping' : '') stash (Hash: $hash; Ref: $ref; Message: $msg)"
 if ($Pop) {
-    RunGit2 stash pop $hash
+    RunGit stash pop $hash
 } else {
-    RunGit2 stash apply $hash
+    RunGit stash apply $hash
 }

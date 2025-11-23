@@ -1,5 +1,5 @@
 ﻿param(
-    [Parameter(Mandatory=$true)] $toTargetBranch,
+    [Parameter(Mandatory)] $toTargetBranch,
     $fromTargetBranch = "master",
     $sourceBranch,
     $remoteName = "origin",
@@ -29,11 +29,11 @@ if ($currentBranch -ne $sourceBranch) {
 
 $newBranchName = "$sourceBranch-to-$toTargetBranch"
 
-RunGit "checkout -b $newBranchName"
+RunGit checkout -b $newBranchName
 
 git cherry-pick --abort
 
-$commits = RunGit "log $fromTargetBranch..$sourceBranch"
+$commits = RunGit log $fromTargetBranch..$sourceBranch
 if (!($commits)) {
     $fromTargetRef = "$fromTargetBranch~1"
 }
@@ -41,9 +41,9 @@ else {
     $fromTargetRef = $fromTargetBranch
 }
 
-RunGit "cherry-pick $fromTargetRef..$sourceBranch --no-merges"
+RunGit cherry-pick $fromTargetRef..$sourceBranch --no-merges
 
-RunGit "push -u $remoteName $newBranchName"
+RunGit push -u $remoteName $newBranchName
 
 if ($returnToCurrentBranch) {
     CheckOutBranch $currentBranch

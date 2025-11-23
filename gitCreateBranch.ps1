@@ -1,5 +1,5 @@
 ﻿param(
-    [Parameter(Mandatory=$true)] $targetBranch,
+    [Parameter(Mandatory)] $targetBranch,
     $sourceBranch = '',
     $remoteName = 'origin',
     [switch] $returnToCurrentBranch
@@ -17,11 +17,11 @@ if ($currentBranch -eq $targetBranch) {
 if ($sourceBranch -and ($currentBranch -ne $sourceBranch)) {
     CheckOutBranch $sourceBranch
 }
-RunGit "checkout -b $targetBranch"
-RunGit "push -u $remoteName $targetBranch"
+RunGit checkout -b $targetBranch
+RunGit push -u $remoteName $targetBranch
 if ($returnToCurrentBranch) {
     CheckOutBranch $currentBranch
 }
 if ($changesStashed) {
-    RunGit "stash pop"
+    RunGit stash pop
 }

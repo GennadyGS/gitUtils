@@ -1,7 +1,7 @@
 param (
-    [Parameter(mandatory=$true)] $oldEmail,
-    [Parameter(mandatory=$true)] $newName,
-    [Parameter(mandatory=$true)] $newEmail,
+    [Parameter(Mandatory)] $oldEmail,
+    [Parameter(Mandatory)] $newName,
+    [Parameter(Mandatory)] $newEmail,
     $remoteName = "origin"
 )
 
@@ -29,8 +29,8 @@ git filter-branch --commit-filter $filter HEAD
 
 $confirmation = Read-Host "Do you want to push changes?"
 if ($confirmation -ne 'Y') { Exit }
-RunGit "push -u --force $remoteName $currentBranch"
+RunGit push -u --force $remoteName $currentBranch
 
 $confirmation = Read-Host "Do you want to remove backup reference?"
 if ($confirmation -ne 'Y') { Exit }
-RunGit "update-ref -d refs/original/refs/heads/$currentBranch"
+RunGit update-ref -d refs/original/refs/heads/$currentBranch

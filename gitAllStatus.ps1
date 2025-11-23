@@ -34,12 +34,12 @@ if (!(Test-Path ".\$gitDirectoryName")) {
     | ForEach-Object {
         Write-Host "$_>" -NoNewLine -ForegroundColor darkYellow
         Push-Location $_
-        $result = RunGit2 status
+        $result = RunGit status
         if (!(IsUntouchedMessage($result))) {
-            RunGit2 status
+            RunGit status
         }
         Pop-Location
     }
 } else {
-    RunGit2 status
+    RunGit status
 }

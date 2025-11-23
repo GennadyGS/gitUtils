@@ -1,8 +1,8 @@
 param(
-    [Parameter(Mandatory = $true)] [string] $Message
+    [Parameter(Mandatory)] [string] $Message
 )
 
 . $PSScriptRoot/gitUtils.ps1
 
-$commit = RunGit2 stash create
-RunGit2 stash store -m $Message $commit
+$commit = RunGit stash create
+RunGit stash store -m $Message $commit
