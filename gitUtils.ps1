@@ -72,6 +72,20 @@ Function CheckGitStash {
     return [bool] ($gitStashOutput | Select-String "Saved working directory")
 }
 
+Function RunWithStashedChanges(
+    [Parameter(Mandatory)] [ScriptBlock] $ScriptBlock
+)
+{
+    $changesStashed = CheckGitStash
+    try {
+        & $ScriptBlock
+    } finally {
+        if ($changesStashed) {
+            RunGit stash pop
+        }
+    }
+}
+
 Function GetCurrentBranch {
     $gitStatus = @(RunGit status -b -noLog)[0]
     return [regex]::match($gitStatus, "On branch (.*)").Groups[1].Value
@@ -123,6 +137,9 @@ Function GetCommitMessages {
 }
 
 Function CheckoutBranch($branchName, $startPoint) {
-    RunGit checkout @args $branchName $startPoint
-    RunGit submodule update
+    $arguments = $args
+    RunWithStashedChanges {
+        RunGit checkout @arguments $branchName $startPoint
+        RunGit submodule update
+    }
 }

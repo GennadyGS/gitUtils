@@ -8,17 +8,15 @@
 
 . $PSScriptRoot/gitUtils.ps1
 
-CheckGitStash | Out-Null
-
 $currentBranch = GetCurrentBranch
-"current branch is $currentBranch"
+Write-Host "current branch is $currentBranch"
 
 if (!$sourceBranch) {
     $sourceBranch = $currentBranch
 }
 
 if ($sourceBranch -eq $toTargetBranch) {
-    "branch $toTargetBranch is already created"
+    Write-Warning "branch $toTargetBranch is already created"
     exit
 }
 if ($currentBranch -ne $sourceBranch) {
@@ -31,7 +29,7 @@ $newBranchName = "$sourceBranch-to-$toTargetBranch"
 
 RunGit checkout -b $newBranchName
 
-git cherry-pick --abort
+RunGit cherry-pick --abort -Silent
 
 $commits = RunGit log $fromTargetBranch..$sourceBranch
 if (!($commits)) {
