@@ -7,24 +7,22 @@
 
 . $PSScriptRoot/gitUtils.ps1
 
-$changesStashed = CheckGitStash
-try {
+RunWithStashedChanges {
     $currentBranch = GetCurrentBranch
-    "current branch is $currentBranch"
+    Write-Host "current branch is $currentBranch"
+
     if ($currentBranch -eq $targetBranch) {
-        "branch $targetBranch is already created"
-        exit
+        Write-Warning "branch $targetBranch is already created"
+        return
     }
+
     if ($sourceBranch -and ($currentBranch -ne $sourceBranch)) {
         CheckOutBranch $sourceBranch
     }
+
     RunGit checkout -b $targetBranch
     RunGit push -u $remoteName $targetBranch
     if ($returnToCurrentBranch) {
         CheckOutBranch $currentBranch
-    }
-} finally {
-    if ($changesStashed) {
-        RunGit stash pop
     }
 }
