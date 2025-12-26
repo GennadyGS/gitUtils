@@ -23,7 +23,8 @@ if ($sourceBranch -and ($currentBranch -ne $sourceBranch)) {
 
 $flag = $force ? "-B" : "-b"
 RunGit checkout $flag $targetBranch
-RunGit push -u $remoteName $targetBranch ($force ? "-f" : "")
+$pushArgs = @('push', '-u', $remoteName, $targetBranch) + ($force ? @('-f') : @())
+RunGit @pushArgs
 if ($returnToCurrentBranch) {
     CheckOutBranch $currentBranch
 }
