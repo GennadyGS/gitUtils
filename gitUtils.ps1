@@ -4,16 +4,16 @@ $highlightedColor = "white"
 function RetryBlock {
     param(
         [Parameter(Mandatory)] [ScriptBlock] $ScriptBlock,
-        [int] $Attempts,
+        [int] $RetryCount = 0,
         [int] $DelaySeconds = 3
     )
-    $establishedAttempts = [Math]::Max($Attempts, 1)
-    for ($i = 1; $i -le $establishedAttempts; $i++) {
+    $attemptCount = [Math]::Max($RetryCount + 1, 1)
+    for ($i = 1; $i -le $attemptCount; $i++) {
         try {
             & $ScriptBlock
             return
         } catch {
-            if ($i -ge $establishedAttempts) {
+            if ($i -ge $attemptCount) {
                 throw $_
             } else {
                 Write-Warning (
@@ -49,21 +49,25 @@ function VerifyExitCode(
     }
 }
 
-Function RunGit(
-    [switch] $NoLog,
-    [switch] $Silent,
-    [switch] $Retry
-)
-{
-    $arguments = $args
+Function RunGit {
+    [CmdletBinding(PositionalBinding = $false)]
+    param (
+        [Parameter(ValueFromRemainingArguments)] [string[]] $GitArgs,
+        [int] $RetryCount = 0,
+        [switch] $NoLog,
+        [switch] $Silent
+    )
+    $arguments = $GitArgs
+    $noLog = $NoLog
+    $silent = $Silent
     RetryBlock {
         VerifyExitCode {
-            RunAndLogCommand git @arguments -NoLog:$NoLog
+            RunAndLogCommand git @arguments -NoLog:$noLog
         } `
         -Description ("git " + ($arguments -join ' ')) `
-        -Silent:$Silent
+        -Silent:$silent
     } `
-    -Attempts ($Retry ? 3 : 1)
+    -RetryCount $RetryCount
 }
 
 Function CheckGitStash {
