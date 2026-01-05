@@ -43,6 +43,7 @@ function VerifyExitCode(
     [string] $Description,
     [switch] $Silent)
 {
+    $global:LastExitCode = 0
     & $ScriptBlock
     if (!$Silent -and $global:LastExitCode -ne 0) {
         throw "'$Description' returned code $global:LastExitCode"
