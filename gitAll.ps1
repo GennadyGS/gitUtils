@@ -1,8 +1,9 @@
 [CmdletBinding(PositionalBinding = $false)]
 param (
-    [Parameter(ValueFromRemainingArguments)] [string[]] $GitArgs,
+    [Parameter(ValueFromRemainingArguments)] [object[]] $GitArgs,
     [int] $RetryCount,
-    [switch] $Silent
+    [switch] $Silent,
+    [switch] $NoLog
 )
 
 . $PSScriptRoot/gitUtils.ps1
@@ -14,9 +15,9 @@ if (!(IsInsideWorkTree)) {
     | ForEach-Object {
         Write-Host "$_>" -NoNewLine -ForegroundColor darkYellow
         Push-Location $_
-        RunGit @arguments -Silent:$Silent -RetryCount $RetryCount
+        RunGit @arguments -RetryCount $RetryCount -Silent:$Silent -NoLog:$NoLog
         Pop-Location
     }
 } else {
-    RunGit @arguments -Silent:$Silent -RetryCount $RetryCount
+    RunGit @arguments -RetryCount $RetryCount -Silent:$Silent -NoLog:$NoLog
 }
