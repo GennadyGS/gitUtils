@@ -4,7 +4,6 @@ param (
 
 . $PSScriptRoot/gitUtils.ps1
 
-$gitDirectoryName = ".git"
 If (!(Test-Path ".\$gitDirectoryName")) {
     Get-ChildItem -Directory `
         | ? {Test-Path "$_\$gitDirectoryName"} `

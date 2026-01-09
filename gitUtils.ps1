@@ -1,6 +1,8 @@
 $highlightedColor = "white"
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new()
 
+$gitDirectoryName = ".git"
+
 function RetryBlock {
     param(
         [Parameter(Mandatory)] [ScriptBlock] $ScriptBlock,
