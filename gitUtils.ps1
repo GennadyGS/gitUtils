@@ -55,7 +55,7 @@ function VerifyExitCode(
 Function RunGit {
     [CmdletBinding(PositionalBinding = $false)]
     param (
-        [Parameter(ValueFromRemainingArguments)] [string[]] $GitArgs,
+        [Parameter(ValueFromRemainingArguments)] [string[]] $GitArgs = @(),
         [int] $RetryCount = 0,
         [switch] $NoLog,
         [switch] $Silent

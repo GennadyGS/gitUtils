@@ -1,7 +1,7 @@
 [CmdletBinding(PositionalBinding = $false)]
 param(
     [Parameter(Mandatory, Position = 0)] [string] $Command,
-    [Parameter(ValueFromRemainingArguments)] [string[]] $CommandArgs,
+    [Parameter(ValueFromRemainingArguments)] [string[]] $CommandArgs = @(),
     [string] $BadCommit = "HEAD",
     [string] $GoodCommit = "stable",
     [switch] $FirstParent

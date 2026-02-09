@@ -1,6 +1,6 @@
 [CmdletBinding(PositionalBinding = $false)]
 param (
-    [Parameter(ValueFromRemainingArguments)] [object[]] $GitArgs,
+    [Parameter(ValueFromRemainingArguments)] [object[]] $GitArgs = @(),
     [int] $RetryCount,
     [switch] $Silent,
     [switch] $NoLog
