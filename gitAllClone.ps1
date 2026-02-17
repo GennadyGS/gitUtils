@@ -1,13 +1,13 @@
 param(
-  [Parameter(Mandatory, Position = 0)]
-  [string] $fileName,
-
-  [Parameter(ValueFromRemainingArguments)]
-  [object[]] $remainingArgs = @()
+    [Parameter(Mandatory, Position = 0)] [string] $FileName,
+    [Parameter(ValueFromRemainingArguments)] [object[]] $RemainingArgs = @(),
+    [int] $RetryCount,
+    [switch] $Silent,
+    [switch] $NoLog
 )
 
 . $PSScriptRoot/gitUtils.ps1
 
-Get-Content $fileName `
+Get-Content $FileName `
     | ? { $_ } `
-    | % { RunGit clone $_ @remainingArgs }
+    | % { RunGit clone $_ @RemainingArgs -RetryCount $RetryCount -Silent:$Silent -NoLog:$NoLog }
