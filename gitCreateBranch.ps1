@@ -18,7 +18,7 @@ if ($currentBranch -eq $targetBranch -and -not $force) {
 }
 
 if ($sourceBranch -and ($currentBranch -ne $sourceBranch)) {
-    CheckOutBranch $sourceBranch
+    SwitchBranch $sourceBranch
 }
 
 $flag = $force ? "-B" : "-b"
@@ -26,5 +26,5 @@ RunGit checkout $flag $targetBranch
 $pushArgs = @('push', '-u', $remoteName, $targetBranch) + ($force ? @('-f') : @())
 RunGit @pushArgs
 if ($returnToCurrentBranch) {
-    CheckOutBranch $currentBranch
+    SwitchBranch $currentBranch
 }

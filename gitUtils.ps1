@@ -143,10 +143,13 @@ Function GetCommitMessages {
         | % { [regex]::match($_, "[0-9a-f]{7,12} (.*)").Groups[1].Value } `
 }
 
-Function CheckoutBranch($branchName, $startPoint) {
-    $arguments = $args
+Function SwitchBranch(
+    [Parameter(Mandatory)] $branchName,
+    $startPoint
+) {
     RunWithStashedChanges {
-        RunGit checkout @arguments $branchName $startPoint
+        $arguments = $startPoint ? @("-C", $branchName, $startPoint) : @($branchName)
+        RunGit switch @arguments
         RunGit submodule update
     }
 }

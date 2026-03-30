@@ -13,7 +13,7 @@ if ($currentBranch -eq $targetBranch) {
     Return
 }
 
-CheckOutBranch $targetBranch "$remoteName/$targetBranch" "-B"
+SwitchBranch $targetBranch "$remoteName/$targetBranch"
 
 if ($deleteCurrentBranch) {
     git branch -d $currentBranch

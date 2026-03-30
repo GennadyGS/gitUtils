@@ -20,7 +20,7 @@ if ($sourceBranch -eq $toTargetBranch) {
     exit
 }
 if ($currentBranch -ne $sourceBranch) {
-    CheckOutBranch $sourceBranch
+    SwitchBranch $sourceBranch
 }
 
 . $PsScriptRoot\gitRecreateBranch.ps1 $toTargetBranch
@@ -44,5 +44,5 @@ RunGit cherry-pick $fromTargetRef..$sourceBranch --no-merges
 RunGit push -u $remoteName $newBranchName
 
 if ($returnToCurrentBranch) {
-    CheckOutBranch $currentBranch
+    SwitchBranch $currentBranch
 }
