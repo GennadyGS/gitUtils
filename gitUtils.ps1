@@ -111,7 +111,7 @@ Function GetCurrentRepositoryName {
 
 Function IsInsideWorkTree {
     git rev-parse --is-inside-work-tree 2>$null | Out-Null
-    return ($LastExitCode -eq 0)
+    return ($global:LastExitCode -eq 0)
 }
 
 Function IsCurrentRepository {
