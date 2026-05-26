@@ -147,9 +147,7 @@ Function SwitchBranch(
     [Parameter(Mandatory)] $branchName,
     $startPoint
 ) {
-    RunWithStashedChanges {
-        $arguments = $startPoint ? @("-C", $branchName, $startPoint) : @($branchName)
-        RunGit switch @arguments
-        RunGit submodule update
-    }
+    $arguments = ($startPoint ? @("-C", $branchName, $startPoint) : @($branchName)) + @("--merge")
+    RunGit switch @arguments
+    RunGit submodule update
 }
